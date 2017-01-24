@@ -80,10 +80,10 @@ public class ArenaHost{
 			arena[x][y] = FRUIT;
 		}
 		//Sprinkle some walls as well
-		for(int i = 0; i < 50; i ++){
+		/*for(int i = 0; i < 50; i ++){
 			int x = (int)(Math.random()*(xSize-2))+1, y = (int)(Math.random()*(ySize-2))+1;
 			arena[x][y] = WALL;
-		}
+		}*/
 	}
 
 

@@ -5,24 +5,9 @@ import java.io.*;
 public class MainServer {
 	public static final int END = -2, ARENA_CONFIG = -3, ARENA_DISPLAY = -4, CLOSE = -5, 
 			SNAKE_CONFIG = -6, REQUEST_SNAKE = -7, KILL_SNAKE = -8;
-	private static final int numApps = 5;
+	private static final int numApps = 2;
 	private static ArrayList<ClientBridge> bridges = new ArrayList<ClientBridge>();
 	private static ClientBridge initialConnectionPoint = new ClientBridge();
-
-	/**
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * <i><ul>It's totally cool cuz it's the <b>main</b> thing.</i></ul><p>
-	 * Redundancy is great, ain't it?
-	 * @param args the argumentative stuff
-	 * @throws IOException the stuff Java likes to complain about
-	 */
 	public static void main(String[] args) throws IOException {
 		int portNumber =2060;
 		try {
