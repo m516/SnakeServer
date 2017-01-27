@@ -5,7 +5,7 @@ import java.io.*;
 public class MainServer {
 	public static final int END = -2, ARENA_CONFIG = -3, ARENA_DISPLAY = -4, CLOSE = -5, 
 			SNAKE_CONFIG = -6, REQUEST_SNAKE = -7, KILL_SNAKE = -8;
-	private static final int numApps = 2;
+	private static final int numApps = 1;
 	private static ArrayList<ClientBridge> bridges = new ArrayList<ClientBridge>();
 	private static ClientBridge initialConnectionPoint = new ClientBridge();
 	public static void main(String[] args) throws IOException {
