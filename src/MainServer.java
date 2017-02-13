@@ -5,13 +5,13 @@ import java.io.*;
 public class MainServer {
 	public static final int END = -2, ARENA_CONFIG = -3, ARENA_DISPLAY = -4, CLOSE = -5, 
 			SNAKE_CONFIG = -6, REQUEST_SNAKE = -7, KILL_SNAKE = -8;
-	private static final int numApps = 1;
+	private static final int numSnakes = 2;
 	private static ArrayList<ClientBridge> bridges = new ArrayList<ClientBridge>();
 	private static ClientBridge initialConnectionPoint = new ClientBridge();
 	public static void main(String[] args) throws IOException {
 		int portNumber =2060;
 		try {
-			for(int i = 0; i < numApps; i ++){
+			for(int i = 0; i < numSnakes; i ++){
 				initialConnectionPoint = new ClientBridge(portNumber);
 				if(!initialConnectionPoint.init()) System.exit(0);
 				ClientBridge b = new ClientBridge();
@@ -33,7 +33,7 @@ public class MainServer {
 				}
 			}
 			Thread.sleep(3000);
-			initializeArena(32, 32, numApps);
+			initializeArena(32, 32, numSnakes);
 			initializeSnakes();
 			for(int i = 0; i < 2048; i ++){
 				updateSnakesAndArena();
@@ -101,15 +101,15 @@ public class MainServer {
 
 	private static void initializeSnakes(){
 		ArenaHost.snakes = new LocI[1][];
-		ArenaHost.isLive = new boolean[numApps];
-		ArenaHost.snakeOwner = new int[numApps];
+		ArenaHost.isLive = new boolean[numSnakes];
+		ArenaHost.snakeOwner = new int[numSnakes];
 		createSnake(0, 0, 5, 5, 10);
-		for(int i = 0; i < numApps - 1; i ++){
+		for(int i = 0; i < numSnakes - 1; i ++){
 			int x = (int)(Math.random()*(ArenaHost.getXSize()-2))+1, 
 					y = (int)(Math.random()*(ArenaHost.getYSize()-2))+1;
 			createNewSnake(x,y,4);
 		}
-		for(int  i = 0; i < numApps; i ++){
+		for(int  i = 0; i < numSnakes; i ++){
 			ArenaHost.isLive[i] = true;
 			ArenaHost.snakeOwner[i] = i;
 		}
