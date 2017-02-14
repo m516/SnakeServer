@@ -151,7 +151,7 @@ public class MainServer {
 
 	private static void updateSnakesAndArena(){
 		for (int i = 0; i < bridges.size(); i++) {
-			if(bridges.get(i).isLive()){
+			if(ArenaHost.isLive(i)){
 				printTo(i,REQUEST_SNAKE);
 				printTo(i,END);
 			}
@@ -206,8 +206,7 @@ public class MainServer {
 
 	/**
 	 * A connection to a client
-	 * @author NullPointerException
-	 *<p><q>Oh yeah, he's totally awesome!</q>
+	 * @author Micah Mundy
 	 */
 	private static class ClientBridge{
 		private ServerSocket connectionSocket;

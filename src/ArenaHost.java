@@ -176,7 +176,15 @@ public class ArenaHost{
 		MainServer.printTo(snakeOwner[id], END);
 		isLive[id] = false;
 	}
-
+	
+	/**
+	 * Returns whether or not a snake is dead
+	 * @param id - the ID of the snake
+	 * @return true if the snake is alive
+	 */
+	public static boolean isLive(int id){
+		return isLive[id];
+	}
 	/**
 	 * Updates the arena after all of the applications submit their
 	 * new snake directions
@@ -206,7 +214,15 @@ public class ArenaHost{
 				snakes[i][0].translate(0, 0);
 				break;
 			}
+
+			//Destroy snakes that are on top of walls, out of bounds, or
+			//attempting to eat other snakes
+			if(!isInBounds(snakes[i][0])){
+				killSnake(i);
+				break;
+			}
 		}
+		
 		//Remove the snake segments
 		for (int i = 0; i < arena.length; i++) {
 			for (int j = 0; j < arena[i].length; j++) {
@@ -228,15 +244,8 @@ public class ArenaHost{
 					break;
 				case EMPTY:
 					break;
-				default: 
-					killSnake(i);
-					break;
-				case ERR:
 					
 				}
-				//Destroy snakes that are on top of walls, out of bounds, or
-				//attempting to eat other snakes
-				//TODO
 				//Add this snake back to the arena
 				for (int j = 0; j < snakes[i].length; j++) {
 					if(isInBounds(snakes[i][0]))
