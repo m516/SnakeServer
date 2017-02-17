@@ -1,8 +1,10 @@
+import java.util.ArrayList;
 
 public class SnakeManager {
-	//TODO manage all connections between snakes and clients here
+	public ArrayList<Snake> snakes = new ArrayList<Snake>();
 	public SnakeManager() {
-		// TODO Auto-generated constructor stub
 	}
+	
+	
 
 }

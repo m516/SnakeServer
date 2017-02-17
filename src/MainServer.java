@@ -137,6 +137,14 @@ public class MainServer {
 		printTo(appID,END);
 	}
 
+	/**
+	 * Creates a snake
+	 * @param appID
+	 * @param snakeNum
+	 * @param x
+	 * @param y
+	 * @param size
+	 */
 	private static void createSnake(int appID, int snakeNum, int x, int y, int size){
 		ArenaHost.snakes[snakeNum] = new LocI[size];
 		printTo(appID,SNAKE_CONFIG);
@@ -149,6 +157,10 @@ public class MainServer {
 		printTo(appID,END);
 	}
 
+	
+	/**
+	 * Updates all of the snakes and the arenaHost
+	 */
 	private static void updateSnakesAndArena(){
 		for (int i = 0; i < bridges.size(); i++) {
 			if(ArenaHost.isLive(i)){
@@ -195,75 +207,6 @@ public class MainServer {
 	private static void close(){
 		for(ClientBridge bridge:bridges){
 			bridge.closeConnection();
-		}
-	}
-
-
-
-
-
-
-
-	/**
-	 * A connection to a client
-	 * @author Micah Mundy
-	 */
-	private static class ClientBridge{
-		private ServerSocket connectionSocket;
-		private Socket socket;
-		private PrintWriter out;
-		private InputStreamReader inReader;
-		private BufferedReader in;
-		private boolean isLive = true;
-		public ClientBridge(){
-			try {
-				connectionSocket = new ServerSocket(0);
-			} catch (IOException e) {
-				e.printStackTrace();
-				isLive = false;
-			}
-		}
-		public ClientBridge(int port){
-			try {
-				connectionSocket = new ServerSocket(port);
-			} catch (IOException e) {
-				e.printStackTrace();
-				isLive = false;
-			}
-		}
-		public boolean init(){
-			try {
-				socket = connectionSocket.accept();
-				out = new PrintWriter(socket.getOutputStream(),true);
-				inReader = new InputStreamReader(socket.getInputStream());
-				in = new BufferedReader(inReader);
-			} catch (IOException e) {
-				e.printStackTrace();
-				isLive = false;
-				return false;
-			}
-			return true;
-		}
-		public void closeConnection(){
-			try {
-				connectionSocket.close();
-				isLive = false;
-			} catch (IOException e) {
-				e.printStackTrace();
-				isLive = false;
-			}
-		}
-		public int getPort(){
-			return connectionSocket.getLocalPort();
-		}
-		public PrintWriter getOutStream() {
-			return out;
-		}
-		public BufferedReader getInStream() {
-			return in;
-		}
-		public boolean isLive(){
-			return isLive;
 		}
 	}
 }
