@@ -12,7 +12,7 @@ public class MainServer {
 		int portNumber =2060;
 		try {
 			for(int i = 0; i < numSnakes; i ++){
-				initialConnectionPoint = new ClientBridge(portNumber);
+				/*initialConnectionPoint = new ClientBridge(portNumber);
 				if(!initialConnectionPoint.init()) System.exit(0);
 				ClientBridge b = new ClientBridge();
 				bridges.add(b);
@@ -30,7 +30,7 @@ public class MainServer {
 						System.out.println("Success!");
 						break;
 					}
-				}
+				}*/
 			}
 			Thread.sleep(3000);
 			initializeArena(32, 32, numSnakes);
