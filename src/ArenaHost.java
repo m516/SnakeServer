@@ -21,8 +21,6 @@ public class ArenaHost{
 	private static volatile byte[][] arena;
 	private static int xSize, ySize;
 	public static ArenaHost instance = new ArenaHost();
-	static LocI[][] snakes;
-	static boolean[] isLive;
 	static int[] snakeOwner;
 	//TODO include functionality so that each snake has an owner identification
 	//
@@ -153,38 +151,9 @@ public class ArenaHost{
 		return isInBounds(l.getX(),l.getY());
 	}
 
-	/**
-	 * Adds a segment to the tail end of a snake
-	 * @param snakeID the ID of the snake
-	 */
-	public static void growSnake(int snakeID){
-		LocI[] temp = new LocI[snakes[snakeID].length+1];
-		for(int i = 0; i < snakes[snakeID].length; i ++){
-			temp[i] = snakes[snakeID][i];
-		}
-		temp[temp.length-1] = temp[temp.length-2].clone();
-		snakes[snakeID] = temp;
-	}
 	
-	/**
-	 * Kills a snake of a certain ID
-	 * @param id the ID of the snake to kill
-	 * TODO include functionality for killing snakes instead of removing client bridges from "bridges"
-	 */
-	public static void killSnake(int id){
-		MainServer.printTo(snakeOwner[id], MainServer.KILL_SNAKE);
-		MainServer.printTo(snakeOwner[id], END);
-		isLive[id] = false;
-	}
-	
-	/**
-	 * Returns whether or not a snake is dead
-	 * @param id - the ID of the snake
-	 * @return true if the snake is alive
-	 */
-	public static boolean isLive(int id){
-		return isLive[id];
-	}
+
+
 	/**
 	 * Updates the arena after all of the applications submit their
 	 * new snake directions
