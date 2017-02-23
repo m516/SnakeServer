@@ -154,43 +154,7 @@ public class ArenaHost{
 	
 
 
-	/**
-	 * Updates the arena after all of the applications submit their
-	 * new snake directions
-	 */
-	public static void update(int[] directions){
-		//Update snake positions
-		for (int i = 0; i < directions.length; i++) {
-			if(snakes[i].length>1){
-				for (int j = snakes[i].length-1; j > 0; j--) {
-					snakes[i][j].jumpTo(snakes[i][j-1]);
-				}
-			}
-			switch(directions[i]){
-			case DOWN:
-				snakes[i][0].translate(0, 1);
-				break;
-			case UP:
-				snakes[i][0].translate(0, -1);
-				break;
-			case RIGHT:
-				snakes[i][0].translate(1, 0);
-				break;
-			case LEFT:
-				snakes[i][0].translate(-1, 0);
-				break;
-			case DEAD:
-				snakes[i][0].translate(0, 0);
-				break;
-			}
 
-			//Destroy snakes that are on top of walls, out of bounds, or
-			//attempting to eat other snakes
-			if(!isInBounds(snakes[i][0])){
-				killSnake(i);
-				break;
-			}
-		}
 		
 		//Remove the snake segments
 		for (int i = 0; i < arena.length; i++) {

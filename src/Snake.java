@@ -6,6 +6,7 @@ import java.util.ArrayList;
  *
  */
 public class Snake {
+	public static final int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, DEAD = 4;
 	private ArrayList<LocI> segments;
 	private boolean isLive = true;
 	private ClientBridge bridge;
@@ -77,6 +78,26 @@ public class Snake {
 	public void addSegmentAt(int x, int y){
 		LocI newSegment = new LocI(x, y);
 		segments.add(newSegment);
+	}
+	
+	public void update(int direction){
+		switch(direction){
+		case DOWN:
+			snakes[i][0].translate(0, 1);
+			break;
+		case UP:
+			snakes[i][0].translate(0, -1);
+			break;
+		case RIGHT:
+			snakes[i][0].translate(1, 0);
+			break;
+		case LEFT:
+			snakes[i][0].translate(-1, 0);
+			break;
+		case DEAD:
+			snakes[i][0].translate(0, 0);
+			break;
+		}
 	}
 	
 }

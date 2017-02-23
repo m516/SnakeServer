@@ -36,10 +36,6 @@ public class MainServer {
 			for(int i = 0; i < 2048; i ++){
 				updateSnakesAndArena();
 			}
-			currentSnakeManagerInstance.spam(CLOSE);
-			currentSnakeManagerInstance.spam(END);
-			Thread.sleep(5000);
-			close();
 			System.out.println("Done!");
 		} catch (Exception e) {
 			System.out.println("Exception caught when trying to listen on port "
