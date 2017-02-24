@@ -9,6 +9,7 @@ public class Snake {
 	public static final int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, DEAD = 4;
 	private ArrayList<LocI> segments;
 	private boolean isLive = true;
+	private int id;
 	private ClientBridge bridge;
 	/**
 	 * Initializes a new snake with a length of 0
@@ -18,9 +19,9 @@ public class Snake {
 	}
 	/**
 	 * Initializes a new snake with all of the segments
-	 * @param initialSegments
+	 * @param initialSegments - the initial cluster of segments the snake begins with
 	 */
-	public Snake(LocI[] initialSegments) {
+	public Snake(int id, LocI[] initialSegments) {
 		segments = new ArrayList<LocI>();
 		for(LocI segment: initialSegments){
 			segments.add(segment);
@@ -31,6 +32,32 @@ public class Snake {
 	 */
 	public void grow(){
 		segments.add(getTail().clone());
+	}
+	/**
+	 * 
+	 * @return the number of segments in the snake
+	 */
+	public int size(){
+		return segments.size();
+	}
+	/**
+	 * @param index - the 
+	 * @return
+	 */
+	public LocI segmentAt(int index){
+		return segments.get(index);
+	}
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
 	}
 	/**
 	 * @return a copy of the tail segment if one exists
@@ -75,28 +102,54 @@ public class Snake {
 		bridge = newClientBridge;
 	}
 	
+	/**
+	 * Adds a segment at a location
+	 * @param x - the x-coordinate of the location to put the segment
+	 * @param y - the y-coordinate of the location to put the segment
+	 */
 	public void addSegmentAt(int x, int y){
 		LocI newSegment = new LocI(x, y);
 		segments.add(newSegment);
 	}
 	
+	/**
+	 * Updates the snake based on a direction retrieved from a client
+	 * @param direction - the new direction of the snake's head <p>
+	 * The current release supports five versions
+	 * UP 
+	 * RIGHT
+	 * DOWN
+	 * LEFT 
+	 * DEAD
+	 * 
+	 */
 	public void update(int direction){
+		//Translate all of the old segments so that they are
+		//"pushed" forward
+		for(int i = segments.size(); i >= 1; i --){
+			segments.get(i).jumpTo(segments.get(i-1));
+		}
+		LocI newHead = segments.get(0);
 		switch(direction){
 		case DOWN:
-			snakes[i][0].translate(0, 1);
+			newHead.translate(0, 1);
 			break;
 		case UP:
-			snakes[i][0].translate(0, -1);
+			newHead.translate(0, -1);
 			break;
 		case RIGHT:
-			snakes[i][0].translate(1, 0);
+			newHead.translate(1, 0);
 			break;
 		case LEFT:
-			snakes[i][0].translate(-1, 0);
+			newHead.translate(-1, 0);
 			break;
 		case DEAD:
-			snakes[i][0].translate(0, 0);
+			newHead.translate(0, 0);
+			isLive = false;
 			break;
+		}
+		if(!ArenaHost.isInBounds(newHead)){
+			bridge.sendKillMessage();
 		}
 	}
 	

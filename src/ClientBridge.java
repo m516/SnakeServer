@@ -12,9 +12,10 @@ import java.net.Socket;
 public class ClientBridge{
 	public static final int END = -2, ARENA_CONFIG = -3, ARENA_DISPLAY = -4, CLOSE = -5, 
 			SNAKE_CONFIG = -6, REQUEST_SNAKE = -7, KILL_SNAKE = -8;
-	
+
 	
 	private ServerSocket connectionSocket;
+	private SnakeManager snakeManager;
 	private Socket socket;
 	private PrintWriter out;
 	private InputStreamReader inReader;
@@ -31,13 +32,14 @@ public class ClientBridge{
 			e.printStackTrace();
 			isLive = false;
 		}
+		snake = new Snake();
 	}
-	
+
 	/**
 	 * Creates a socket
 	 * @param port - the port number to connect to
 	 */
-	public ClientBridge(int port){
+	public ClientBridge(SnakeManager s, int port){
 		try {
 			connectionSocket = new ServerSocket(port);
 		} catch (IOException e) {
@@ -45,9 +47,10 @@ public class ClientBridge{
 			isLive = false;
 			return;
 		}
+		snake = new Snake();
 		init();
 	}
-	
+
 	/**
 	 * Accepts a client requesting to connect to the server
 	 * @return true if the instance is properly initialized
@@ -65,7 +68,7 @@ public class ClientBridge{
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Closes the connection to the client
 	 */
@@ -78,42 +81,56 @@ public class ClientBridge{
 			isLive = false;
 		}
 	}
-	
+
 	/**
 	 * @return the port this instance is connected to
 	 */
 	public int getPort(){
 		return connectionSocket.getLocalPort();
 	}
-	
+
+	/**
+	 * @return the snakeManager
+	 */
+	public SnakeManager getSnakeManager() {
+		return snakeManager;
+	}
+
+	/**
+	 * @param snakeManager the snakeManager to set
+	 */
+	public void setSnakeManager(SnakeManager snakeManager) {
+		this.snakeManager = snakeManager;
+	}
+
 	/**
 	 * @return the output stream in the form of a PrintWriter
 	 */
 	public PrintWriter getOutStream() {
 		return out;
 	}
-	
+
 	/**
 	 * @return the input stream in the form of a PrintWriter
 	 */
 	public BufferedReader getInStream() {
 		return in;
 	}
-	
+
 	/**
 	 * @return true if this connection is still live
 	 */
 	public boolean isLive(){
 		return isLive;
 	}
-	
+
 	/**
 	 * @return the snake binded with this ClientBridge
 	 */
 	public Snake getSnake(){
 		return snake;
 	}
-	
+
 	/**
 	 * Syncs this socket with a snake
 	 * @param s - the snake to bind to the client
@@ -121,17 +138,17 @@ public class ClientBridge{
 	public void syncWithSnake(Snake s){
 		snake = s;
 	}
-	
+
 	/**
 	 * Kills a snake of a certain ID
 	 * @param id the ID of the snake to kill
 	 * TODO include functionality for killing snakes instead of removing client bridges from "bridges"
 	 */
-	public void killSnake(){
+	public void sendKillMessage(){
 		out.println(KILL_SNAKE);
 		out.println(END);
 	}
-	
+
 	/**
 	 * Retrieves an integer value from an application
 	 * @return the next number that the client application sent to the server
@@ -147,7 +164,7 @@ public class ClientBridge{
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Initializes the snake and relays the initial positions of each segment to the client
 	 * @param x - the x-coordinate of the snake
@@ -156,9 +173,11 @@ public class ClientBridge{
 	 */
 	public void initializeSnake(int x, int y, int size){
 		out.println(SNAKE_CONFIG);
-		out.println(MainServer.currentSnakeManagerInstance.clients.indexOf(this)+ArenaHost.FRUIT);
+		int id = snakeManager.getClients().indexOf(this);
+		out.println(id+ArenaHost.FRUIT);
 		if(snake == null){
 			snake = new Snake();
+			snake.setId(id);
 			snake.syncWithClientBridge(this);
 		}
 		for (int i = 0; i < size; i++) {
@@ -167,5 +186,20 @@ public class ClientBridge{
 			out.println(y);
 		}
 		out.println(END);
+	}
+
+	public void updateSnake(){
+		if(snake.isLive()){
+			out.println(REQUEST_SNAKE);
+			out.println(END);
+			snake.update(getInt());
+		}
+	}
+	
+	public void sendArenaSize(){
+		out.println(ClientBridge.ARENA_CONFIG);
+		out.println(ArenaHost.getXSize());
+		out.println(ArenaHost.getYSize());
+		out.println(ClientBridge.END);
 	}
 }

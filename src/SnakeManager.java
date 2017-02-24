@@ -1,18 +1,36 @@
 import java.util.ArrayList;
 
 public class SnakeManager {
-	public ArrayList<ClientBridge> clients = new ArrayList<ClientBridge>();
+	private volatile ArrayList<ClientBridge> clients = new ArrayList<ClientBridge>();
 	public SnakeManager() {}
 	
-	public void addClientBridge(ClientBridge b){
+	/**
+	 * Adds a ClientBridge instance to the list of clients
+	 * @param b
+	 */
+	public synchronized void addClientBridge(ClientBridge b){
 		clients.add(b);
 	}
 	
+	/**
+	 * @return the clients
+	 */
+	public ArrayList<ClientBridge> getClients() {
+		return clients;
+	}
+
+	/**
+	 * @param i - the index of the Snake instance requested
+	 * @return the Snake if one exists
+	 */
 	public Snake getSnakeAt(int i){
 		return clients.get(i).getSnake();
 	}
 	
-	
+	/**
+	 * @param i - the index of the ClientBridge instance requested
+	 * @return the ClientBridge if one exists
+	 */
 	public ClientBridge getBridgeAt(int i){
 		return clients.get(i);
 	}
@@ -48,25 +66,23 @@ public class SnakeManager {
 	}
 	
 	/**
-	 * Updates the arena after all of the applications submit their
-	 * new snake directions
+	 * Updates all of the snakes
 	 */
-	public static void update(int[] directions){
-		//Update snake positions
-		for (int i = 0; i < directions.length; i++) {
-			if(snakes[i].length>1){
-				for (int j = snakes[i].length-1; j > 0; j--) {
-					snakes[i][j].jumpTo(snakes[i][j-1]);
-				}
-			}
-			
-
-			//Destroy snakes that are on top of walls, out of bounds, or
-			//attempting to eat other snakes
-			if(!isInBounds(snakes[i][0])){
-				killSnake(i);
-				break;
-			}
+	public void updateAllSnakes(){
+		for(ClientBridge b: clients){
+			b.updateSnake();
 		}
-
+	}
+	
+	/**
+	 * @return all of the snake instances contained
+	 * in the ClientBridges
+	 */
+	public Snake[] getSnakes(){
+		Snake[] snakes = new Snake[clients.size()];
+		for (int i = 0; i < clients.size(); i++) {
+			snakes[i] = clients.get(i).getSnake();
+		}
+		return snakes;
+	}
 }

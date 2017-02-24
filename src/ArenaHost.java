@@ -53,7 +53,7 @@ public class ArenaHost{
 	 * @param new_y_size - the new height of the arena
 	 * @param numSnakes - the number of snakes in the arena
 	 */
-	public static void init(int new_x_size, int new_y_size, int new_numSnakes){
+	public static void init(int new_x_size, int new_y_size){
 		//resize the arena
 		arena = new byte[new_x_size][new_y_size];
 		xSize = new_x_size;
@@ -151,12 +151,12 @@ public class ArenaHost{
 		return isInBounds(l.getX(),l.getY());
 	}
 
-	
 
 
 
-		
-		//Remove the snake segments
+
+	public static void updateArena(SnakeManager snakeManager){
+		//Remove the old snake segments
 		for (int i = 0; i < arena.length; i++) {
 			for (int j = 0; j < arena[i].length; j++) {
 				if(arena[i][j]>FRUIT){
@@ -164,28 +164,22 @@ public class ArenaHost{
 				}
 			}
 		}
-		//Add all of the snakes back to the arena with a few final checks
+		//Add all of the snakes back to the arena
+		Snake[] snakes = snakeManager.getSnakes();
 		for (int i = 0; i < snakes.length; i++) {
-			//Is this snake still alive?
-			if(isLive[i]){
-				//Grow snakes that eat fruit
-				switch(getBlock(snakes[i][0])){
-				case FRUIT:
-					int x = (int)(Math.random()*(xSize-2))+1, y = (int)(Math.random()*(ySize-2))+1;
-					arena[x][y] = FRUIT;
-					growSnake(i);
-					break;
-				case EMPTY:
-					break;
-					
-				}
-				//Add this snake back to the arena
-				for (int j = 0; j < snakes[i].length; j++) {
-					if(isInBounds(snakes[i][0]))
-					setBlock(snakes[i][j],(byte)(FRUIT+1+i));
-				}
+			//Add this snake back to the arena
+			for (int j = 0; j < snakes[i].size(); j++) {
+				if(isInBounds(snakes[i].segmentAt(j)))
+					setBlock(snakes[i].segmentAt(j),(byte)(snakes[i].getId()+FRUIT));
 			}
 		}
+	}
+	
+	/**
+	 * @return the current state of the arena
+	 */
+	public byte[][] getArena(){
+		return arena;
 	}
 }
 
