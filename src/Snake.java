@@ -152,5 +152,8 @@ public class Snake {
 			bridge.sendKillMessage();
 		}
 	}
+	public void setDead(boolean isDead){
+		isLive = !isDead;
+	}
 	
 }

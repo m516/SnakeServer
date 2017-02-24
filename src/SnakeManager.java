@@ -80,8 +80,8 @@ public class SnakeManager {
 			}
 		}
 		//Send a copy of the arena to all of the clients
-		for(ClientBridge b:clients){
-			b.sendArena();
+		for(int i = clients.size()-1; i >= 0; i --){
+			clients.get(i).sendArena();
 		}
 	}
 

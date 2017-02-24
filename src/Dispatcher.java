@@ -30,8 +30,7 @@ public class Dispatcher extends Thread{
 				s.close();
 				initialConnectionPoint.close();
 				if(b.init()){
-					MainServer.currentSnakeManagerInstance.addClientBridge(b);
-
+					snakeManager.addClientBridge(b);
 					//Test the input and output streams of the new ClientBridge
 					out = b.getOutStream();
 					in = b.getInStream();
@@ -43,6 +42,7 @@ public class Dispatcher extends Thread{
 							break;
 						}
 					}
+					b.getSnake().setId(snakeManager.getClients().size()-1);
 					b.initializeSnake(5, 5, 3);
 					b.sendArenaSize();
 					System.out.println("Clients total: " + snakeManager.getClients().size());

@@ -33,6 +33,7 @@ public class ClientBridge{
 			isLive = false;
 		}
 		snake = new Snake();
+		snake.syncWithClientBridge(this);
 	}
 
 	/**
@@ -48,6 +49,7 @@ public class ClientBridge{
 			return;
 		}
 		snake = new Snake();
+		snake.syncWithClientBridge(this);
 		init();
 	}
 
@@ -138,6 +140,7 @@ public class ClientBridge{
 	 */
 	public void syncWithSnake(Snake s){
 		snake = s;
+		s.syncWithClientBridge(this);
 	}
 
 	/**
@@ -148,6 +151,7 @@ public class ClientBridge{
 	public void sendKillMessage(){
 		out.println(KILL_SNAKE);
 		out.println(END);
+		snake.setDead(true);
 	}
 
 	/**
@@ -201,6 +205,7 @@ public class ClientBridge{
 		out.println(ARENA_CONFIG);
 		out.println(ArenaHost.getXSize());
 		out.println(ArenaHost.getYSize());
+		out.println(32);
 		out.println(ClientBridge.END);
 	}
 	

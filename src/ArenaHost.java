@@ -170,7 +170,7 @@ public class ArenaHost{
 			//Add this snake back to the arena
 			for (int j = 0; j < snakes[i].size(); j++) {
 				if(isInBounds(snakes[i].segmentAt(j)))
-					setBlock(snakes[i].segmentAt(j),(byte)(snakes[i].getId()+FRUIT));
+					setBlock(snakes[i].segmentAt(j),(byte)(snakes[i].getId()+FRUIT+1));
 			}
 		}
 	}
