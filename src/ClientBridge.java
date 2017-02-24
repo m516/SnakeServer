@@ -63,6 +63,7 @@ public class ClientBridge{
 			in = new BufferedReader(inReader);
 		} catch (IOException e) {
 			System.out.println("Failed to establish connection to client");
+			e.printStackTrace();
 			isLive = false;
 			return false;
 		}
@@ -197,9 +198,20 @@ public class ClientBridge{
 	}
 	
 	public void sendArenaSize(){
-		out.println(ClientBridge.ARENA_CONFIG);
+		out.println(ARENA_CONFIG);
 		out.println(ArenaHost.getXSize());
 		out.println(ArenaHost.getYSize());
 		out.println(ClientBridge.END);
+	}
+	
+	public void sendArena(){
+		byte[][] cells = ArenaHost.getArena();
+		out.println(ARENA_DISPLAY);
+		for(byte[] column: cells){
+			for(byte row:column){
+				out.println(row);
+			}
+		}
+		out.println(END);
 	}
 }

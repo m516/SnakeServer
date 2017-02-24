@@ -178,7 +178,7 @@ public class ArenaHost{
 	/**
 	 * @return the current state of the arena
 	 */
-	public byte[][] getArena(){
+	public static byte[][] getArena(){
 		return arena;
 	}
 }

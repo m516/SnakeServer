@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class SnakeManager {
 	private volatile ArrayList<ClientBridge> clients = new ArrayList<ClientBridge>();
 	public SnakeManager() {}
-	
+
 	/**
 	 * Adds a ClientBridge instance to the list of clients
 	 * @param b
@@ -11,7 +11,7 @@ public class SnakeManager {
 	public synchronized void addClientBridge(ClientBridge b){
 		clients.add(b);
 	}
-	
+
 	/**
 	 * @return the clients
 	 */
@@ -26,7 +26,7 @@ public class SnakeManager {
 	public Snake getSnakeAt(int i){
 		return clients.get(i).getSnake();
 	}
-	
+
 	/**
 	 * @param i - the index of the ClientBridge instance requested
 	 * @return the ClientBridge if one exists
@@ -64,16 +64,27 @@ public class SnakeManager {
 			bridge.closeConnection();
 		}
 	}
-	
+
 	/**
 	 * Updates all of the snakes
 	 */
 	public void updateAllSnakes(){
-		for(ClientBridge b: clients){
-			b.updateSnake();
+		for(int i = clients.size()-1; i >= 0 ; i --){
+			ClientBridge b = clients.get(i);
+			if(b.isLive()){
+				b.updateSnake();
+			}
+			else{
+				b.closeConnection();
+				clients.remove(i);
+			}
+		}
+		//Send a copy of the arena to all of the clients
+		for(ClientBridge b:clients){
+			b.sendArena();
 		}
 	}
-	
+
 	/**
 	 * @return all of the snake instances contained
 	 * in the ClientBridges

@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Dispatcher extends Thread{
-	ClientBridge initialConnectionPoint;
-	public static final int INITIAL_CONNECTION_PORT = 2060;
+	ServerSocket initialConnectionPoint;
+	public static final int INITIAL_CONNECTION_PORT = 6419;
 	private volatile SnakeManager snakeManager;
 	public Dispatcher(SnakeManager mySnakeManager) {
 		snakeManager = mySnakeManager;
@@ -13,34 +16,41 @@ public class Dispatcher extends Thread{
 	@Override public void run(){
 		while(true){
 			try{
-				initialConnectionPoint = new ClientBridge(null, INITIAL_CONNECTION_PORT);
-				if(!initialConnectionPoint.init()) System.exit(0);
+				initialConnectionPoint = new ServerSocket(INITIAL_CONNECTION_PORT);
+				Socket s = initialConnectionPoint.accept();
+				PrintWriter out = new PrintWriter(s.getOutputStream(),true);
+				BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				ClientBridge b = new ClientBridge();
 				b.setSnakeManager(snakeManager);
-				initialConnectionPoint.getOutStream().println(b.getPort());
-				String inputLine = initialConnectionPoint.getInStream().readLine();
+				out.println(b.getPort());
+				String inputLine = in.readLine();
 				System.out.println("Client: " + inputLine);
-				initialConnectionPoint.closeConnection();
-				if(!b.init()) return;
-				MainServer.currentSnakeManagerInstance.addClientBridge(b);
+				out.close();
+				in.close();
+				s.close();
+				initialConnectionPoint.close();
+				if(b.init()){
+					MainServer.currentSnakeManagerInstance.addClientBridge(b);
 
-				//Test the input and output streams of the new ClientBridge
-				PrintWriter out = b.getOutStream();
-				BufferedReader in = b.getInStream();
-				while((inputLine = in.readLine()) != null){
-					System.out.println(inputLine);
-					if(inputLine.equals("Requesting test response")){
-						out.println("Success");
-						System.out.println("Success!");
-						break;
+					//Test the input and output streams of the new ClientBridge
+					out = b.getOutStream();
+					in = b.getInStream();
+					while((inputLine = in.readLine()) != null){
+						System.out.println(inputLine);
+						if(inputLine.equals("Requesting test response")){
+							out.println("Success");
+							System.out.println("Success!");
+							break;
+						}
 					}
+					b.initializeSnake(5, 5, 3);
+					b.sendArenaSize();
+					System.out.println("Clients total: " + snakeManager.getClients().size());
 				}
-				b.initializeSnake(5, 5, 3);
-				b.sendArenaSize();
-				System.out.println("Clients total: " + snakeManager.getClients().size());
 			}
 			catch(Exception e){
-				System.out.println(e.getMessage());
+				e.printStackTrace();
+				System.exit(0);
 			}
 		}
 	}

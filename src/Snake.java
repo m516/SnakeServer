@@ -126,7 +126,7 @@ public class Snake {
 	public void update(int direction){
 		//Translate all of the old segments so that they are
 		//"pushed" forward
-		for(int i = segments.size(); i >= 1; i --){
+		for(int i = segments.size()-1; i >= 1; i --){
 			segments.get(i).jumpTo(segments.get(i-1));
 		}
 		LocI newHead = segments.get(0);
