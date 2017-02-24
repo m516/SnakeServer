@@ -21,8 +21,6 @@ public class ArenaHost{
 	private static volatile byte[][] arena;
 	private static int xSize, ySize;
 	public static ArenaHost instance = new ArenaHost();
-	static LocI[][] snakes;
-	static boolean[] isLive;
 	static int[] snakeOwner;
 	//TODO include functionality so that each snake has an owner identification
 	//
@@ -55,7 +53,7 @@ public class ArenaHost{
 	 * @param new_y_size - the new height of the arena
 	 * @param numSnakes - the number of snakes in the arena
 	 */
-	public static void init(int new_x_size, int new_y_size, int new_numSnakes){
+	public static void init(int new_x_size, int new_y_size){
 		//resize the arena
 		arena = new byte[new_x_size][new_y_size];
 		xSize = new_x_size;
@@ -153,77 +151,12 @@ public class ArenaHost{
 		return isInBounds(l.getX(),l.getY());
 	}
 
-	/**
-	 * Adds a segment to the tail end of a snake
-	 * @param snakeID the ID of the snake
-	 */
-	public static void growSnake(int snakeID){
-		LocI[] temp = new LocI[snakes[snakeID].length+1];
-		for(int i = 0; i < snakes[snakeID].length; i ++){
-			temp[i] = snakes[snakeID][i];
-		}
-		temp[temp.length-1] = temp[temp.length-2].clone();
-		snakes[snakeID] = temp;
-	}
-	
-	/**
-	 * Kills a snake of a certain ID
-	 * @param id the ID of the snake to kill
-	 * TODO include functionality for killing snakes instead of removing client bridges from "bridges"
-	 */
-	public static void killSnake(int id){
-		MainServer.printTo(snakeOwner[id], MainServer.KILL_SNAKE);
-		MainServer.printTo(snakeOwner[id], END);
-		isLive[id] = false;
-	}
-	
-	/**
-	 * Returns whether or not a snake is dead
-	 * @param id - the ID of the snake
-	 * @return true if the snake is alive
-	 */
-	public static boolean isLive(int id){
-		return isLive[id];
-	}
-	/**
-	 * Updates the arena after all of the applications submit their
-	 * new snake directions
-	 */
-	public static void update(int[] directions){
-		//Update snake positions
-		for (int i = 0; i < directions.length; i++) {
-			if(snakes[i].length>1){
-				for (int j = snakes[i].length-1; j > 0; j--) {
-					snakes[i][j].jumpTo(snakes[i][j-1]);
-				}
-			}
-			switch(directions[i]){
-			case DOWN:
-				snakes[i][0].translate(0, 1);
-				break;
-			case UP:
-				snakes[i][0].translate(0, -1);
-				break;
-			case RIGHT:
-				snakes[i][0].translate(1, 0);
-				break;
-			case LEFT:
-				snakes[i][0].translate(-1, 0);
-				break;
-			case DEAD:
-				snakes[i][0].translate(0, 0);
-				break;
-			}
 
-			//Destroy snakes that are on top of walls, out of bounds, or
-			//attempting to eat other snakes
-			if(!isInBounds(snakes[i][0])){
-				killSnake(i);
-				break;
-			}
-		}
-		
-		//Remove the snake segments
+
+
+
+	public static void updateArena(SnakeManager snakeManager){
+		//Remove the old snake segments
 		for (int i = 0; i < arena.length; i++) {
 			for (int j = 0; j < arena[i].length; j++) {
 				if(arena[i][j]>FRUIT){
@@ -231,28 +164,22 @@ public class ArenaHost{
 				}
 			}
 		}
-		//Add all of the snakes back to the arena with a few final checks
+		//Add all of the snakes back to the arena
+		Snake[] snakes = snakeManager.getSnakes();
 		for (int i = 0; i < snakes.length; i++) {
-			//Is this snake still alive?
-			if(isLive[i]){
-				//Grow snakes that eat fruit
-				switch(getBlock(snakes[i][0])){
-				case FRUIT:
-					int x = (int)(Math.random()*(xSize-2))+1, y = (int)(Math.random()*(ySize-2))+1;
-					arena[x][y] = FRUIT;
-					growSnake(i);
-					break;
-				case EMPTY:
-					break;
-					
-				}
-				//Add this snake back to the arena
-				for (int j = 0; j < snakes[i].length; j++) {
-					if(isInBounds(snakes[i][0]))
-					setBlock(snakes[i][j],(byte)(FRUIT+1+i));
-				}
+			//Add this snake back to the arena
+			for (int j = 0; j < snakes[i].size(); j++) {
+				if(isInBounds(snakes[i].segmentAt(j)))
+					setBlock(snakes[i].segmentAt(j),(byte)(snakes[i].getId()+FRUIT));
 			}
 		}
+	}
+	
+	/**
+	 * @return the current state of the arena
+	 */
+	public static byte[][] getArena(){
+		return arena;
 	}
 }
 

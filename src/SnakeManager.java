@@ -1,8 +1,99 @@
+import java.util.ArrayList;
 
 public class SnakeManager {
-	//TODO manage all connections between snakes and clients here
-	public SnakeManager() {
-		// TODO Auto-generated constructor stub
+	private volatile ArrayList<ClientBridge> clients = new ArrayList<ClientBridge>();
+	public SnakeManager() {}
+
+	/**
+	 * Adds a ClientBridge instance to the list of clients
+	 * @param b
+	 */
+	public synchronized void addClientBridge(ClientBridge b){
+		clients.add(b);
 	}
 
+	/**
+	 * @return the clients
+	 */
+	public ArrayList<ClientBridge> getClients() {
+		return clients;
+	}
+
+	/**
+	 * @param i - the index of the Snake instance requested
+	 * @return the Snake if one exists
+	 */
+	public Snake getSnakeAt(int i){
+		return clients.get(i).getSnake();
+	}
+
+	/**
+	 * @param i - the index of the ClientBridge instance requested
+	 * @return the ClientBridge if one exists
+	 */
+	public ClientBridge getBridgeAt(int i){
+		return clients.get(i);
+	}
+
+	/**
+	 * Sends a message to all of the applications connected to the server
+	 * @param msg - the message to send to all of the applications 
+	 * connected to the server
+	 */
+	public void spam(int msg){
+		for(ClientBridge bridge:clients){
+			if(bridge.isLive()){
+				bridge.getOutStream().println(msg);
+			}
+		}
+	}
+
+	/**
+	 * Closes the connections to all of the client applications
+	 */
+	public void close(){
+		spam(ClientBridge.CLOSE);
+		spam(ClientBridge.END);
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		close();
+		for(ClientBridge bridge:clients){
+			bridge.closeConnection();
+		}
+	}
+
+	/**
+	 * Updates all of the snakes
+	 */
+	public void updateAllSnakes(){
+		for(int i = clients.size()-1; i >= 0 ; i --){
+			ClientBridge b = clients.get(i);
+			if(b.isLive()){
+				b.updateSnake();
+			}
+			else{
+				b.closeConnection();
+				clients.remove(i);
+			}
+		}
+		//Send a copy of the arena to all of the clients
+		for(ClientBridge b:clients){
+			b.sendArena();
+		}
+	}
+
+	/**
+	 * @return all of the snake instances contained
+	 * in the ClientBridges
+	 */
+	public Snake[] getSnakes(){
+		Snake[] snakes = new Snake[clients.size()];
+		for (int i = 0; i < clients.size(); i++) {
+			snakes[i] = clients.get(i).getSnake();
+		}
+		return snakes;
+	}
 }
