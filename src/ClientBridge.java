@@ -163,9 +163,10 @@ public class ClientBridge{
 			int r = Integer.parseInt(in.readLine());
 			return r;
 		} catch (NumberFormatException | IOException e) {
-			e.printStackTrace();
+			System.out.println("No response from client with Snake ID of " + snake.getId());
 			isLive = false;
 			closeConnection();
+			snakeManager.getClients().remove(this);
 		}
 		return -1;
 	}

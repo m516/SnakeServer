@@ -71,7 +71,7 @@ public class SnakeManager {
 	public void updateAllSnakes(){
 		for(int i = clients.size()-1; i >= 0 ; i --){
 			ClientBridge b = clients.get(i);
-			if(b.isLive()){
+			if(b.getSnake().isLive()){
 				b.updateSnake();
 			}
 			else{
