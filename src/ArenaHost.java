@@ -181,5 +181,27 @@ public class ArenaHost{
 	public static byte[][] getArena(){
 		return arena;
 	}
+	
+	/**
+	 * 
+	 * @return a random empty location in the arena
+	 */
+	public static LocI getRandomEmptyLocation(){
+		LocI l = new LocI(-1, -1);
+		do{
+			l.jumpTo((int)(Math.random()*xSize), (int)(Math.random()*ySize));
+		}while(isEmpty(l));
+		return l;
+	}
+	
+	/**
+	 * 
+	 * @param l - a location in the arena
+	 * @return true if the location <b>l</b> is a valid, empty location
+	 */
+	public static boolean isEmpty(LocI l){
+		if(l == null) return false;
+		return getBlock(l) == EMPTY;
+	}
 }
 

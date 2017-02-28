@@ -150,6 +150,7 @@ public class Snake {
 		}
 		if(!ArenaHost.isInBounds(newHead)){
 			bridge.sendKillMessage();
+			isLive = false;
 		}
 	}
 	public void setDead(boolean isDead){

@@ -77,6 +77,8 @@ public class SnakeManager {
 			else{
 				b.closeConnection();
 				clients.remove(i);
+				System.out.println("Snake at index " + i + " died.");
+				System.out.println(clients.size() + " snakes remaining");
 			}
 		}
 		//Send a copy of the arena to all of the clients

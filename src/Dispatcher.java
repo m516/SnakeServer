@@ -43,7 +43,8 @@ public class Dispatcher extends Thread{
 						}
 					}
 					b.getSnake().setId(snakeManager.getClients().size()-1);
-					b.initializeSnake(5, 5, 3);
+					LocI initialLocation = ArenaHost.getRandomEmptyLocation();
+					b.initializeSnake(initialLocation.getX(), initialLocation.getY(), 3);
 					b.sendArenaSize();
 					System.out.println("Clients total: " + snakeManager.getClients().size());
 				}
