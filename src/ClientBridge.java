@@ -202,11 +202,16 @@ public class ClientBridge{
 		}
 	}
 	
+	/**
+	 * Configures the arena on the client's side by sending
+	 * information regarding the size of the arena and
+	 * how many snakes are in the arena
+	 */
 	public void sendArenaSize(){
 		out.println(ARENA_CONFIG);
 		out.println(ArenaHost.getXSize());
 		out.println(ArenaHost.getYSize());
-		out.println(32);
+		out.println(5);
 		out.println(ClientBridge.END);
 	}
 	

@@ -154,7 +154,15 @@ public class ArenaHost{
 
 
 
-
+	/**
+	 * Updates the main arena by removing all of the snake segments
+	 * and adding them back to the arena.  For best results (as
+	 * in actually doing something with this method), use this
+	 * method after calling <code>updateAllSnakes()</code> in
+	 * the <code>SnakeManager</code> instance used in the parameter
+	 * @param snakeManager - the <code>SnakeManager</code> instance
+	 * containing live snakes to be added into the arena
+	 */
 	public static void updateArena(SnakeManager snakeManager){
 		//Remove the old snake segments
 		for (int i = 0; i < arena.length; i++) {
@@ -169,8 +177,10 @@ public class ArenaHost{
 		for (int i = 0; i < snakes.length; i++) {
 			//Add this snake back to the arena
 			for (int j = 0; j < snakes[i].size(); j++) {
-				if(isInBounds(snakes[i].segmentAt(j)))
-					setBlock(snakes[i].segmentAt(j),(byte)(snakes[i].getId()+FRUIT+1));
+				if(isInBounds(snakes[i].segmentAt(j))){
+					byte segmentValue = (byte)(snakes[i].getId()+FRUIT+1);
+					setBlock(snakes[i].segmentAt(j),segmentValue);
+				}
 			}
 		}
 	}
@@ -190,7 +200,7 @@ public class ArenaHost{
 		LocI l = new LocI(-1, -1);
 		do{
 			l.jumpTo((int)(Math.random()*xSize), (int)(Math.random()*ySize));
-		}while(isEmpty(l));
+		}while(!isEmpty(l));
 		return l;
 	}
 	
