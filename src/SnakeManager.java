@@ -10,6 +10,7 @@ public class SnakeManager {
 	 */
 	public synchronized void addClientBridge(ClientBridge b){
 		clients.add(b);
+		System.out.println("Clients total: " + clients.size());
 	}
 
 	/**

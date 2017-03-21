@@ -32,15 +32,15 @@ public class Dispatcher extends Thread{
 				if(b.init()){
 					//Test the input and output streams of the new ClientBridge
 					out = b.getOutStream();
-					in = b.getInStream();
-					while((inputLine = in.readLine()) != null){
-						System.out.println(inputLine);
-						if(inputLine.equals("Requesting test response")){
-							out.println("Success");
-							System.out.println("Success!");
-							break;
-						}
-					}
+//					in = b.getInStream();
+//					while((inputLine = in.readLine()) != null){
+//						System.out.println(inputLine);
+//						if(inputLine.equals("Requesting test response")){
+//							out.println("Success");
+//							System.out.println("Success!");
+//							break;
+//						}
+//					}
 					b.sendArenaSize();
 					//Place the snake in an empty space in the arena
 					LocI initialLocation = ArenaHost.getRandomEmptyLocation();
@@ -49,7 +49,6 @@ public class Dispatcher extends Thread{
 					//This ClientBridge instance has been totally initialized.
 					//Add it to the list of clients in SnakeManager
 					snakeManager.addClientBridge(b);
-					System.out.println("Clients total: " + snakeManager.getClients().size());
 				}
 			}
 			catch(Exception e){
