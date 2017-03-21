@@ -146,7 +146,6 @@ public class ClientBridge{
 	/**
 	 * Kills a snake of a certain ID
 	 * @param id the ID of the snake to kill
-	 * TODO include functionality for killing snakes instead of removing client bridges from "bridges"
 	 */
 	public void sendKillMessage(){
 		out.println(KILL_SNAKE);
@@ -164,6 +163,7 @@ public class ClientBridge{
 			return r;
 		} catch (NumberFormatException | IOException e) {
 			System.out.println("No response from client with Snake ID of " + snake.getId());
+			System.out.println(MainServer.currentSnakeManagerInstance.getClients().size() + " snakes remaining");
 			isLive = false;
 			closeConnection();
 			snakeManager.getClients().remove(this);
@@ -211,7 +211,6 @@ public class ClientBridge{
 		out.println(ARENA_CONFIG);
 		out.println(ArenaHost.getXSize());
 		out.println(ArenaHost.getYSize());
-		out.println(5);
 		out.println(ClientBridge.END);
 	}
 	

@@ -22,8 +22,6 @@ public class ArenaHost{
 	private static int xSize, ySize;
 	public static ArenaHost instance = new ArenaHost();
 	static int[] snakeOwner;
-	//TODO include functionality so that each snake has an owner identification
-	//
 	private ArenaHost(){
 	}
 

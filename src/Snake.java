@@ -124,6 +124,7 @@ public class Snake {
 	 * 
 	 */
 	public void update(int direction){
+		//TODO Test for snakes colliding with each other
 		//Translate all of the old segments so that they are
 		//"pushed" forward
 		for(int i = segments.size()-1; i >= 1; i --){
