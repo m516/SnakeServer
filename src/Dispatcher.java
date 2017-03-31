@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -14,33 +15,37 @@ public class Dispatcher extends Thread{
 	}
 
 	@Override public void run(){
-		while(true){
-			try{
-				initialConnectionPoint = new ServerSocket(INITIAL_CONNECTION_PORT);
-				Socket s = initialConnectionPoint.accept();
+		try{
+			initialConnectionPoint = new ServerSocket(INITIAL_CONNECTION_PORT);
+			Socket s;
+			while(true){
+				s = initialConnectionPoint.accept();
+				//A client has attempted to connect to this port
+				System.out.println("Attempted connection");
 				PrintWriter out = new PrintWriter(s.getOutputStream(),true);
 				BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				ClientBridge b = new ClientBridge();
 				b.setSnakeManager(snakeManager);
+				//Create a client in an open port
+				System.out.println("Opening connection on port "+b.getPort());
 				out.println(b.getPort());
 				String inputLine = in.readLine();
 				System.out.println("Client: " + inputLine);
 				out.close();
 				in.close();
 				s.close();
-				initialConnectionPoint.close();
 				if(b.init()){
 					//Test the input and output streams of the new ClientBridge
 					out = b.getOutStream();
-//					in = b.getInStream();
-//					while((inputLine = in.readLine()) != null){
-//						System.out.println(inputLine);
-//						if(inputLine.equals("Requesting test response")){
-//							out.println("Success");
-//							System.out.println("Success!");
-//							break;
-//						}
-//					}
+					//					in = b.getInStream();
+					//					while((inputLine = in.readLine()) != null){
+					//						System.out.println(inputLine);
+					//						if(inputLine.equals("Requesting test response")){
+					//							out.println("Success");
+					//							System.out.println("Success!");
+					//							break;
+					//						}
+					//					}
 					b.sendArenaSize();
 					//Place the snake in an empty space in the arena
 					LocI initialLocation = ArenaHost.getRandomEmptyLocation();
@@ -50,11 +55,17 @@ public class Dispatcher extends Thread{
 					//Add it to the list of clients in SnakeManager
 					snakeManager.addClientBridge(b);
 				}
+				else{System.err.println("Failed to establish connection");};
 			}
-			catch(Exception e){
-				e.printStackTrace();
-				System.exit(0);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			try {
+				initialConnectionPoint.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
+			System.exit(0);
 		}
 	}
 }

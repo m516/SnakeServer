@@ -60,6 +60,7 @@ public class ClientBridge{
 	public boolean init(){
 		try {
 			socket = connectionSocket.accept();
+			System.out.println("ClientBridge on port "+getPort() +" connected to client.");
 			out = new PrintWriter(socket.getOutputStream(),true);
 			inReader = new InputStreamReader(socket.getInputStream());
 			in = new BufferedReader(inReader);
