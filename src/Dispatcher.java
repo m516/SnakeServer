@@ -28,15 +28,15 @@ public class Dispatcher extends Thread{
 				b.setSnakeManager(snakeManager);
 				//Create a client in an open port
 				System.out.println("Opening connection on port "+b.getPort());
-				out.println(b.getPort());
 				String inputLine = in.readLine();
+				out.println(b.getPort());
 				System.out.println("Client: " + inputLine);
 				out.close();
 				in.close();
 				s.close();
-				if(b.init()){
+				if(b.initializeConnection()){
 					//Test the input and output streams of the new ClientBridge
-					out = b.getOutStream();
+					//					out = b.getOutStream();
 					//					in = b.getInStream();
 					//					while((inputLine = in.readLine()) != null){
 					//						System.out.println(inputLine);
@@ -49,13 +49,13 @@ public class Dispatcher extends Thread{
 					b.sendArenaSize();
 					//Place the snake in an empty space in the arena
 					LocI initialLocation = ArenaHost.getRandomEmptyLocation();
-					b.getSnake().setId(snakeManager.getUniqueSnakeID());
 					b.initializeSnake(initialLocation.getX(), initialLocation.getY(), 3);
 					//This ClientBridge instance has been totally initialized.
 					//Add it to the list of clients in SnakeManager
 					snakeManager.addClientBridge(b);
 				}
 				else{System.err.println("Failed to establish connection");};
+				System.out.println("Connection finished: waiting for new connection.");
 			}
 		}
 		catch(Exception e){

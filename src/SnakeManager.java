@@ -106,13 +106,14 @@ public class SnakeManager {
 	 */
 	public int getUniqueSnakeID(){
 		int id = -1;
-		boolean hasMatch = false;
-		do{
+		boolean hasMatch = true;
+		while(hasMatch){
 			id ++;
+			hasMatch = false;
 			for(ClientBridge c:clients){
-				if(c.getSnake().getId()==id)hasMatch = true;
+				if(c.getSnake().getId()==id){hasMatch = true;break;}
 			}
-		}while(hasMatch);
+		}
 		return id;
 	}
 }

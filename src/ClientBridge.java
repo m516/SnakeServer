@@ -32,8 +32,6 @@ public class ClientBridge{
 			e.printStackTrace();
 			isLive = false;
 		}
-		snake = new Snake();
-		snake.syncWithClientBridge(this);
 	}
 
 	/**
@@ -48,16 +46,14 @@ public class ClientBridge{
 			isLive = false;
 			return;
 		}
-		snake = new Snake();
-		snake.syncWithClientBridge(this);
-		init();
+		initializeConnection();
 	}
 
 	/**
 	 * Accepts a client requesting to connect to the server
 	 * @return true if the instance is properly initialized
 	 */
-	public boolean init(){
+	public boolean initializeConnection(){
 		try {
 			socket = connectionSocket.accept();
 			System.out.println("ClientBridge on port "+getPort() +" connected to client.");
@@ -163,11 +159,11 @@ public class ClientBridge{
 			int r = Integer.parseInt(in.readLine());
 			return r;
 		} catch (NumberFormatException | IOException e) {
-			System.out.println("No response from client with Snake ID of " + snake.getId());
-			System.out.println(MainServer.currentSnakeManagerInstance.getClients().size() + " snakes remaining");
 			isLive = false;
 			closeConnection();
 			snakeManager.getClients().remove(this);
+			System.out.println("No response from client with Snake ID of " + snake.getId());
+			System.out.println(MainServer.currentSnakeManagerInstance.getClients().size() + " snakes remaining");
 		}
 		return -1;
 	}
@@ -179,19 +175,23 @@ public class ClientBridge{
 	 * @param size - the initial size of the snake
 	 */
 	public void initializeSnake(int x, int y, int size){
-		out.println(SNAKE_CONFIG);
-		int id = snakeManager.getClients().indexOf(this);
-		out.println(id+ArenaHost.FRUIT);
+		//Is there a snake for this client?
 		if(snake == null){
 			snake = new Snake();
-			snake.setId(id);
+			snake.setId(snakeManager.getUniqueSnakeID());
 			snake.syncWithClientBridge(this);
 		}
+		//Send the command to the client first
+		out.println(SNAKE_CONFIG);
+		//Print the snake ID
+		out.println(snake.getId());
+		//Print all of the segments that it represent the snake
 		for (int i = 0; i < size; i++) {
 			snake.addSegmentAt(x, y);
 			out.println(x);
 			out.println(y);
 		}
+		//This command is finished
 		out.println(END);
 	}
 
