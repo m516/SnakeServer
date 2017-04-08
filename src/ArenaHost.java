@@ -181,6 +181,7 @@ public class ArenaHost{
 				}
 			}
 		}
+		if(Math.random()>.5)setBlock(getRandomEmptyLocation(),FRUIT);
 	}
 	
 	/**
