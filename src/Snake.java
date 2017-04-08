@@ -124,6 +124,7 @@ public class Snake {
 	 * 
 	 */
 	public void update(int direction){
+		//TODO Test for snakes colliding with each other
 		//Translate all of the old segments so that they are
 		//"pushed" forward
 		for(int i = segments.size()-1; i >= 1; i --){
@@ -150,7 +151,11 @@ public class Snake {
 		}
 		if(!ArenaHost.isInBounds(newHead)){
 			bridge.sendKillMessage();
+			isLive = false;
 		}
+	}
+	public void setDead(boolean isDead){
+		isLive = !isDead;
 	}
 	
 }

@@ -22,8 +22,6 @@ public class ArenaHost{
 	private static int xSize, ySize;
 	public static ArenaHost instance = new ArenaHost();
 	static int[] snakeOwner;
-	//TODO include functionality so that each snake has an owner identification
-	//
 	private ArenaHost(){
 	}
 
@@ -154,7 +152,15 @@ public class ArenaHost{
 
 
 
-
+	/**
+	 * Updates the main arena by removing all of the snake segments
+	 * and adding them back to the arena.  For best results (as
+	 * in actually doing something with this method), use this
+	 * method after calling <code>updateAllSnakes()</code> in
+	 * the <code>SnakeManager</code> instance used in the parameter
+	 * @param snakeManager - the <code>SnakeManager</code> instance
+	 * containing live snakes to be added into the arena
+	 */
 	public static void updateArena(SnakeManager snakeManager){
 		//Remove the old snake segments
 		for (int i = 0; i < arena.length; i++) {
@@ -169,8 +175,10 @@ public class ArenaHost{
 		for (int i = 0; i < snakes.length; i++) {
 			//Add this snake back to the arena
 			for (int j = 0; j < snakes[i].size(); j++) {
-				if(isInBounds(snakes[i].segmentAt(j)))
-					setBlock(snakes[i].segmentAt(j),(byte)(snakes[i].getId()+FRUIT));
+				if(isInBounds(snakes[i].segmentAt(j))){
+					byte segmentValue = (byte)(snakes[i].getId()+FRUIT+1);
+					setBlock(snakes[i].segmentAt(j),segmentValue);
+				}
 			}
 		}
 	}
@@ -180,6 +188,28 @@ public class ArenaHost{
 	 */
 	public static byte[][] getArena(){
 		return arena;
+	}
+	
+	/**
+	 * 
+	 * @return a random empty location in the arena
+	 */
+	public static LocI getRandomEmptyLocation(){
+		LocI l = new LocI(-1, -1);
+		do{
+			l.jumpTo((int)(Math.random()*xSize), (int)(Math.random()*ySize));
+		}while(!isEmpty(l));
+		return l;
+	}
+	
+	/**
+	 * 
+	 * @param l - a location in the arena
+	 * @return true if the location <b>l</b> is a valid, empty location
+	 */
+	public static boolean isEmpty(LocI l){
+		if(l == null) return false;
+		return getBlock(l) == EMPTY;
 	}
 }
 

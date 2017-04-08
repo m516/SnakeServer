@@ -32,7 +32,6 @@ public class ClientBridge{
 			e.printStackTrace();
 			isLive = false;
 		}
-		snake = new Snake();
 	}
 
 	/**
@@ -47,17 +46,17 @@ public class ClientBridge{
 			isLive = false;
 			return;
 		}
-		snake = new Snake();
-		init();
+		initializeConnection();
 	}
 
 	/**
 	 * Accepts a client requesting to connect to the server
 	 * @return true if the instance is properly initialized
 	 */
-	public boolean init(){
+	public boolean initializeConnection(){
 		try {
 			socket = connectionSocket.accept();
+			System.out.println("ClientBridge on port "+getPort() +" connected to client.");
 			out = new PrintWriter(socket.getOutputStream(),true);
 			inReader = new InputStreamReader(socket.getInputStream());
 			in = new BufferedReader(inReader);
@@ -138,16 +137,17 @@ public class ClientBridge{
 	 */
 	public void syncWithSnake(Snake s){
 		snake = s;
+		s.syncWithClientBridge(this);
 	}
 
 	/**
 	 * Kills a snake of a certain ID
 	 * @param id the ID of the snake to kill
-	 * TODO include functionality for killing snakes instead of removing client bridges from "bridges"
 	 */
 	public void sendKillMessage(){
 		out.println(KILL_SNAKE);
 		out.println(END);
+		snake.setDead(true);
 	}
 
 	/**
@@ -159,9 +159,11 @@ public class ClientBridge{
 			int r = Integer.parseInt(in.readLine());
 			return r;
 		} catch (NumberFormatException | IOException e) {
-			e.printStackTrace();
 			isLive = false;
 			closeConnection();
+			snakeManager.getClients().remove(this);
+			System.out.println("No response from client with Snake ID of " + snake.getId());
+			System.out.println(MainServer.currentSnakeManagerInstance.getClients().size() + " snakes remaining");
 		}
 		return -1;
 	}
@@ -173,19 +175,23 @@ public class ClientBridge{
 	 * @param size - the initial size of the snake
 	 */
 	public void initializeSnake(int x, int y, int size){
-		out.println(SNAKE_CONFIG);
-		int id = snakeManager.getClients().indexOf(this);
-		out.println(id+ArenaHost.FRUIT);
+		//Is there a snake for this client?
 		if(snake == null){
 			snake = new Snake();
-			snake.setId(id);
+			snake.setId(snakeManager.getUniqueSnakeID());
 			snake.syncWithClientBridge(this);
 		}
+		//Send the command to the client first
+		out.println(SNAKE_CONFIG);
+		//Print the snake ID
+		out.println(snake.getId());
+		//Print all of the segments that it represent the snake
 		for (int i = 0; i < size; i++) {
 			snake.addSegmentAt(x, y);
 			out.println(x);
 			out.println(y);
 		}
+		//This command is finished
 		out.println(END);
 	}
 
@@ -197,6 +203,11 @@ public class ClientBridge{
 		}
 	}
 	
+	/**
+	 * Configures the arena on the client's side by sending
+	 * information regarding the size of the arena and
+	 * how many snakes are in the arena
+	 */
 	public void sendArenaSize(){
 		out.println(ARENA_CONFIG);
 		out.println(ArenaHost.getXSize());

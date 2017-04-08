@@ -10,6 +10,7 @@ public class SnakeManager {
 	 */
 	public synchronized void addClientBridge(ClientBridge b){
 		clients.add(b);
+		System.out.println("Clients total: " + clients.size());
 	}
 
 	/**
@@ -71,17 +72,19 @@ public class SnakeManager {
 	public void updateAllSnakes(){
 		for(int i = clients.size()-1; i >= 0 ; i --){
 			ClientBridge b = clients.get(i);
-			if(b.isLive()){
+			if(b.getSnake().isLive()){
 				b.updateSnake();
 			}
 			else{
 				b.closeConnection();
 				clients.remove(i);
+				System.out.println("Snake at index " + i + " died.");
+				System.out.println(clients.size() + " snakes remaining");
 			}
 		}
 		//Send a copy of the arena to all of the clients
-		for(ClientBridge b:clients){
-			b.sendArena();
+		for(int i = clients.size()-1; i >= 0; i --){
+			clients.get(i).sendArena();
 		}
 	}
 
@@ -95,5 +98,22 @@ public class SnakeManager {
 			snakes[i] = clients.get(i).getSnake();
 		}
 		return snakes;
+	}
+	
+	/**
+	 * Finds the lowest snake ID not currently occupied by a snake
+	 * @return the lowest snake ID not currently occupied by a snake
+	 */
+	public int getUniqueSnakeID(){
+		int id = -1;
+		boolean hasMatch = true;
+		while(hasMatch){
+			id ++;
+			hasMatch = false;
+			for(ClientBridge c:clients){
+				if(c.getSnake().getId()==id){hasMatch = true;break;}
+			}
+		}
+		return id;
 	}
 }
