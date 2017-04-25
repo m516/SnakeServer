@@ -11,7 +11,6 @@ public class Dispatcher extends Thread{
 	private volatile SnakeManager snakeManager;
 	public Dispatcher(SnakeManager mySnakeManager) {
 		snakeManager = mySnakeManager;
-		start();
 	}
 
 	@Override public void run(){
@@ -35,17 +34,6 @@ public class Dispatcher extends Thread{
 				in.close();
 				s.close();
 				if(b.initializeConnection()){
-					//Test the input and output streams of the new ClientBridge
-					//					out = b.getOutStream();
-					//					in = b.getInStream();
-					//					while((inputLine = in.readLine()) != null){
-					//						System.out.println(inputLine);
-					//						if(inputLine.equals("Requesting test response")){
-					//							out.println("Success");
-					//							System.out.println("Success!");
-					//							break;
-					//						}
-					//					}
 					b.sendArenaSize();
 					//Place the snake in an empty space in the arena
 					LocI initialLocation = ArenaHost.getRandomEmptyLocation();

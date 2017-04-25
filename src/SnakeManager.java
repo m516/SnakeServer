@@ -2,7 +2,11 @@ import java.util.ArrayList;
 
 public class SnakeManager {
 	private volatile ArrayList<ClientBridge> clients = new ArrayList<ClientBridge>();
-	public SnakeManager() {}
+	private Dispatcher dispatcher;
+	public SnakeManager() {
+		dispatcher = new Dispatcher(this);
+		dispatcher.start();
+	}
 
 	/**
 	 * Adds a ClientBridge instance to the list of clients
@@ -16,7 +20,7 @@ public class SnakeManager {
 	/**
 	 * @return the clients
 	 */
-	public ArrayList<ClientBridge> getClients() {
+	public synchronized ArrayList<ClientBridge> getClients() {
 		return clients;
 	}
 
@@ -24,7 +28,7 @@ public class SnakeManager {
 	 * @param i - the index of the Snake instance requested
 	 * @return the Snake if one exists
 	 */
-	public Snake getSnakeAt(int i){
+	public synchronized Snake getSnakeAt(int i){
 		return clients.get(i).getSnake();
 	}
 
@@ -32,7 +36,7 @@ public class SnakeManager {
 	 * @param i - the index of the ClientBridge instance requested
 	 * @return the ClientBridge if one exists
 	 */
-	public ClientBridge getBridgeAt(int i){
+	public synchronized ClientBridge getBridgeAt(int i){
 		return clients.get(i);
 	}
 
@@ -41,7 +45,7 @@ public class SnakeManager {
 	 * @param msg - the message to send to all of the applications 
 	 * connected to the server
 	 */
-	public void spam(int msg){
+	private void spam(int msg){
 		for(ClientBridge bridge:clients){
 			if(bridge.isLive()){
 				bridge.getOutStream().println(msg);
@@ -52,7 +56,7 @@ public class SnakeManager {
 	/**
 	 * Closes the connections to all of the client applications
 	 */
-	public void close(){
+	public synchronized void close(){
 		spam(ClientBridge.CLOSE);
 		spam(ClientBridge.END);
 		try {
@@ -69,7 +73,7 @@ public class SnakeManager {
 	/**
 	 * Updates all of the snakes
 	 */
-	public void updateAllSnakes(){
+	public synchronized void updateAllSnakes(){
 		for(int i = clients.size()-1; i >= 0 ; i --){
 			ClientBridge b = clients.get(i);
 			if(b.getSnake().isLive()){
@@ -92,7 +96,7 @@ public class SnakeManager {
 	 * @return all of the snake instances contained
 	 * in the ClientBridges
 	 */
-	public Snake[] getSnakes(){
+	public synchronized Snake[] getSnakes(){
 		Snake[] snakes = new Snake[clients.size()];
 		for (int i = 0; i < clients.size(); i++) {
 			snakes[i] = clients.get(i).getSnake();
@@ -104,7 +108,7 @@ public class SnakeManager {
 	 * Finds the lowest snake ID not currently occupied by a snake
 	 * @return the lowest snake ID not currently occupied by a snake
 	 */
-	public int getUniqueSnakeID(){
+	public synchronized int getUniqueSnakeID(){
 		int id = -1;
 		boolean hasMatch = true;
 		while(hasMatch){

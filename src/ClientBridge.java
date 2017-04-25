@@ -10,8 +10,8 @@ import java.net.Socket;
  * @author Micah Mundy
  */
 public class ClientBridge{
-	public static final int END = -2, ARENA_CONFIG = -3, ARENA_DISPLAY = -4, CLOSE = -5, 
-			SNAKE_CONFIG = -6, REQUEST_SNAKE = -7, KILL_SNAKE = -8;
+	public static final int END = 249, ARENA_CONFIG = 250, ARENA_DISPLAY = 251, CLOSE = 252, 
+			SNAKE_CONFIG = 253, REQUEST_SNAKE = 254, KILL_SNAKE = 255;
 
 	
 	private ServerSocket connectionSocket;
@@ -145,8 +145,8 @@ public class ClientBridge{
 	 * @param id the ID of the snake to kill
 	 */
 	public void sendKillMessage(){
-		out.println(KILL_SNAKE);
-		out.println(END);
+		printInteger(KILL_SNAKE);
+		printInteger(END);
 		snake.setDead(true);
 	}
 
@@ -182,23 +182,23 @@ public class ClientBridge{
 			snake.syncWithClientBridge(this);
 		}
 		//Send the command to the client first
-		out.println(SNAKE_CONFIG);
+		printInteger(SNAKE_CONFIG);
 		//Print the snake ID
-		out.println(snake.getId());
+		printInteger(snake.getId());
 		//Print all of the segments that it represent the snake
 		for (int i = 0; i < size; i++) {
 			snake.addSegmentAt(x, y);
-			out.println(x);
-			out.println(y);
+			printInteger(x);
+			printInteger(y);
 		}
 		//This command is finished
-		out.println(END);
+		printInteger(END);
 	}
 
 	public void updateSnake(){
 		if(snake.isLive()){
-			out.println(REQUEST_SNAKE);
-			out.println(END);
+			printInteger(REQUEST_SNAKE);
+			printInteger(END);
 			snake.update(getInt());
 		}
 	}
@@ -209,20 +209,31 @@ public class ClientBridge{
 	 * how many snakes are in the arena
 	 */
 	public void sendArenaSize(){
-		out.println(ARENA_CONFIG);
-		out.println(ArenaHost.getXSize());
-		out.println(ArenaHost.getYSize());
-		out.println(ClientBridge.END);
+		printInteger(ARENA_CONFIG);
+		printInteger(ArenaHost.getXSize());
+		printInteger(ArenaHost.getYSize());
+		printInteger(ClientBridge.END);
 	}
 	
+	/**
+	 * Sends all of the contents of the arena to the client
+	 */
 	public void sendArena(){
 		byte[][] cells = ArenaHost.getArena();
-		out.println(ARENA_DISPLAY);
+		printInteger(ARENA_DISPLAY);
 		for(byte[] column: cells){
 			for(byte row:column){
-				out.println(row);
+				printInteger(row);
 			}
 		}
-		out.println(END);
+		printInteger(END);
+	}
+	
+	/**
+	 * Prints an integer value to the client
+	 * @param n - the number to print to
+	 */
+	public void printInteger(int n){
+		out.println(n);
 	}
 }
