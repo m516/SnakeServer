@@ -36,8 +36,8 @@ public class Dispatcher extends Thread{
 				if(b.initializeConnection()){
 					b.sendArenaSize();
 					//Place the snake in an empty space in the arena
-					LocI initialLocation = ArenaHost.getRandomEmptyLocation();
-					b.initializeSnake(initialLocation.getX(), initialLocation.getY(), 3);
+					LocB initialLocation = ArenaHost.getRandomEmptyLocation();
+					b.initializeSnake(initialLocation.getX(), initialLocation.getY(), (byte) 3);
 					//This ClientBridge instance has been totally initialized.
 					//Add it to the list of clients in SnakeManager
 					snakeManager.addClientBridge(b);

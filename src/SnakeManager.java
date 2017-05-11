@@ -108,8 +108,8 @@ public class SnakeManager {
 	 * Finds the lowest snake ID not currently occupied by a snake
 	 * @return the lowest snake ID not currently occupied by a snake
 	 */
-	public synchronized int getUniqueSnakeID(){
-		int id = -1;
+	public synchronized byte getUniqueSnakeID(){
+		byte id = -1;
 		boolean hasMatch = true;
 		while(hasMatch){
 			id ++;

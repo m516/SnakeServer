@@ -10,10 +10,8 @@ import java.net.Socket;
  * @author Micah Mundy
  */
 public class ClientBridge{
-	public static final int END = 249, ARENA_CONFIG = 250, ARENA_DISPLAY = 251, CLOSE = 252, 
-			SNAKE_CONFIG = 253, REQUEST_SNAKE = 254, KILL_SNAKE = 255;
-
-	
+	public static final byte END = 121, ARENA_CONFIG = 122, ARENA_DISPLAY = 123, CLOSE = 124, 
+			SNAKE_CONFIG = 125, REQUEST_SNAKE = 126, KILL_SNAKE = 127;
 	private ServerSocket connectionSocket;
 	private SnakeManager snakeManager;
 	private Socket socket;
@@ -145,8 +143,8 @@ public class ClientBridge{
 	 * @param id the ID of the snake to kill
 	 */
 	public void sendKillMessage(){
-		printInteger(KILL_SNAKE);
-		printInteger(END);
+		printByte(KILL_SNAKE);
+		printByte(END);
 		snake.setDead(true);
 	}
 
@@ -174,7 +172,7 @@ public class ClientBridge{
 	 * @param y - the y-coordinate of the snake
 	 * @param size - the initial size of the snake
 	 */
-	public void initializeSnake(int x, int y, int size){
+	public void initializeSnake(byte x, byte y, byte size){
 		//Is there a snake for this client?
 		if(snake == null){
 			snake = new Snake();
@@ -182,23 +180,23 @@ public class ClientBridge{
 			snake.syncWithClientBridge(this);
 		}
 		//Send the command to the client first
-		printInteger(SNAKE_CONFIG);
+		printByte(SNAKE_CONFIG);
 		//Print the snake ID
-		printInteger(snake.getId());
+		printByte(snake.getId());
 		//Print all of the segments that it represent the snake
 		for (int i = 0; i < size; i++) {
 			snake.addSegmentAt(x, y);
-			printInteger(x);
-			printInteger(y);
+			printByte(x);
+			printByte(y);
 		}
 		//This command is finished
-		printInteger(END);
+		printByte(END);
 	}
 
 	public void updateSnake(){
 		if(snake.isLive()){
-			printInteger(REQUEST_SNAKE);
-			printInteger(END);
+			printByte(REQUEST_SNAKE);
+			printByte(END);
 			snake.update(getInt());
 		}
 	}
@@ -209,10 +207,10 @@ public class ClientBridge{
 	 * how many snakes are in the arena
 	 */
 	public void sendArenaSize(){
-		printInteger(ARENA_CONFIG);
-		printInteger(ArenaHost.getXSize());
-		printInteger(ArenaHost.getYSize());
-		printInteger(ClientBridge.END);
+		printByte(ARENA_CONFIG);
+		printByte(ArenaHost.getXSize());
+		printByte(ArenaHost.getYSize());
+		printByte(ClientBridge.END);
 	}
 	
 	/**
@@ -220,20 +218,20 @@ public class ClientBridge{
 	 */
 	public void sendArena(){
 		byte[][] cells = ArenaHost.getArena();
-		printInteger(ARENA_DISPLAY);
+		printByte(ARENA_DISPLAY);
 		for(byte[] column: cells){
 			for(byte row:column){
-				printInteger(row);
+				printByte(row);
 			}
 		}
-		printInteger(END);
+		printByte(END);
 	}
 	
 	/**
 	 * Prints an integer value to the client
 	 * @param n - the number to print to
 	 */
-	public void printInteger(int n){
+	public void printByte(byte n){
 		out.println(n);
 	}
 }

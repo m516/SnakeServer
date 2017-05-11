@@ -16,10 +16,9 @@ public class ArenaHost{
 	 * ARENA_DISPLAY   - the updated arena, followed by all of the pixels
 	 * END             - An end of a command
 	 */
-	public static final int END = -2, ARENA_CONFIG = -3, ARENA_DISPLAY = -4, SNAKE_CONFIG = -6;
 	public static final int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, DEAD = 4;
 	private static volatile byte[][] arena;
-	private static int xSize, ySize;
+	private static byte xSize, ySize;
 	public static ArenaHost instance = new ArenaHost();
 	static int[] snakeOwner;
 	private ArenaHost(){
@@ -30,7 +29,7 @@ public class ArenaHost{
 	/**
 	 * @return the width of the arena
 	 */
-	public static int getXSize() {
+	public static byte getXSize() {
 		return xSize;
 	}
 
@@ -39,7 +38,7 @@ public class ArenaHost{
 	/**
 	 * @return the height of the arena
 	 */
-	public static int getYSize() {
+	public static byte getYSize() {
 		return ySize;
 	}
 
@@ -54,8 +53,8 @@ public class ArenaHost{
 	public static void init(int new_x_size, int new_y_size){
 		//resize the arena
 		arena = new byte[new_x_size][new_y_size];
-		xSize = new_x_size;
-		ySize = new_y_size;
+		xSize = (byte) new_x_size;
+		ySize = (byte) new_y_size;
 		for (int i = 0; i < arena.length; i++) {
 			for (int j = 0; j < arena[i].length; j++) {
 				arena[i][j] = EMPTY;
@@ -96,13 +95,14 @@ public class ArenaHost{
 
 
 
+
 	/**
 	 * Changes a block 
 	 * @param location - the location of the position in the arena
 	 * to change 
 	 * @param type - the new type of the block's contents
 	 */
-	public static void setBlock(LocI location, byte type){
+	public static void setBlock(LocB location, byte type){
 		arena[location.getX()][location.getY()] = type;
 	}
 
@@ -122,7 +122,7 @@ public class ArenaHost{
 	 * Gets the status of a block 
 	 * @param location - the location of the block to get
 	 */
-	public static byte getBlock(LocI location){
+	public static byte getBlock(LocB location){
 		if(isInBounds(location))
 			return arena[location.getX()][location.getY()];
 		return ERR;
@@ -145,7 +145,7 @@ public class ArenaHost{
 	 * @param l - the location
 	 * @return true if the location is in bounds
 	 */
-	final protected static boolean isInBounds(LocI l) {
+	final protected static boolean isInBounds(LocB l) {
 		return isInBounds(l.getX(),l.getY());
 	}
 
@@ -195,10 +195,10 @@ public class ArenaHost{
 	 * 
 	 * @return a random empty location in the arena
 	 */
-	public static LocI getRandomEmptyLocation(){
-		LocI l = new LocI(-1, -1);
+	public static LocB getRandomEmptyLocation(){
+		LocB l = new LocB(-1, -1);
 		do{
-			l.jumpTo((int)(Math.random()*xSize), (int)(Math.random()*ySize));
+			l.jumpTo((byte)(Math.random()*xSize), (byte)(Math.random()*ySize));
 		}while(!isEmpty(l));
 		return l;
 	}
@@ -208,7 +208,7 @@ public class ArenaHost{
 	 * @param l - a location in the arena
 	 * @return true if the location <b>l</b> is a valid, empty location
 	 */
-	public static boolean isEmpty(LocI l){
+	public static boolean isEmpty(LocB l){
 		if(l == null) return false;
 		return getBlock(l) == EMPTY;
 	}

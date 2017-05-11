@@ -7,23 +7,23 @@ import java.util.ArrayList;
  */
 public class Snake {
 	public static final int UP = 0, RIGHT = 1, DOWN = 2, LEFT = 3, DEAD = 4;
-	private ArrayList<LocI> segments;
+	private ArrayList<LocB> segments;
 	private boolean isLive = true;
-	private int id;
+	private byte id;
 	private ClientBridge bridge;
 	/**
 	 * Initializes a new snake with a length of 0
 	 */
 	public Snake(){
-		segments = new ArrayList<LocI>();
+		segments = new ArrayList<LocB>();
 	}
 	/**
 	 * Initializes a new snake with all of the segments
 	 * @param initialSegments - the initial cluster of segments the snake begins with
 	 */
-	public Snake(int id, LocI[] initialSegments) {
-		segments = new ArrayList<LocI>();
-		for(LocI segment: initialSegments){
+	public Snake(int id, LocB[] initialSegments) {
+		segments = new ArrayList<LocB>();
+		for(LocB segment: initialSegments){
 			segments.add(segment);
 		}
 	}
@@ -44,25 +44,25 @@ public class Snake {
 	 * @param index - the 
 	 * @return
 	 */
-	public LocI segmentAt(int index){
+	public LocB segmentAt(int index){
 		return segments.get(index);
 	}
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public byte getId() {
 		return id;
 	}
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(int id) {
+	public void setId(byte id) {
 		this.id = id;
 	}
 	/**
 	 * @return a copy of the tail segment if one exists
 	 */
-	public LocI getTail(){
+	public LocB getTail(){
 		if(segments.size()>0)
 			return segments.get(segments.size()-1);
 		return null;
@@ -72,7 +72,7 @@ public class Snake {
 	 * 
 	 * @return a copy of the head segment if one exists
 	 */
-	public LocI getHead(){
+	public LocB getHead(){
 		if(segments.size()>0)
 			return segments.get(0);
 		return null;
@@ -108,7 +108,7 @@ public class Snake {
 	 * @param y - the y-coordinate of the location to put the segment
 	 */
 	public void addSegmentAt(int x, int y){
-		LocI newSegment = new LocI(x, y);
+		LocB newSegment = new LocB(x, y);
 		segments.add(newSegment);
 	}
 
@@ -130,7 +130,7 @@ public class Snake {
 			for(int i = segments.size()-1; i >= 1; i --){
 				segments.get(i).jumpTo(segments.get(i-1));
 			}
-			LocI newHead = segments.get(0);
+			LocB newHead = segments.get(0);
 			switch(direction){
 			case DOWN:
 				newHead.translate(0, 1);
