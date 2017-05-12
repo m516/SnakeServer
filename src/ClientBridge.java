@@ -218,20 +218,32 @@ public class ClientBridge{
 	 */
 	public void sendArena(){
 		byte[][] cells = ArenaHost.getArena();
+		byte[] buffer = new byte[ArenaHost.getXSize()*ArenaHost.getYSize()+1];
 		printByte(ARENA_DISPLAY);
-		for(byte[] column: cells){
-			for(byte row:column){
-				printByte(row);
+		for (int i = 0; i < cells.length; i++) {
+			for (int j = 0; j < cells[i].length; j++) {
+				buffer[i*ArenaHost.getXSize()+j] = cells[i][j];
 			}
 		}
-		printByte(END);
+		buffer[buffer.length-1] = END;
+		printBytes(buffer);
 	}
 	
 	/**
-	 * Prints an integer value to the client
+	 * Prints a byte value to the client
 	 * @param n - the number to print to
 	 */
 	public void printByte(byte n){
-		out.println(n);
+		out.write((char)n);
+		out.flush();
+	}
+	
+	/**
+	 * Prints a bunch of byte values to the client
+	 * @param n - the number to print to
+	 */
+	public void printBytes(byte[] n){
+		for(byte b: n) out.write((char)b);
+		out.flush();
 	}
 }
